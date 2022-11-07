@@ -1,0 +1,59 @@
+id: 0
+name: my-vapor-project
+environments:
+    production:
+        memory: 1024
+        cli-memory: 512
+        cli-tmp-storage: 512
+        timeout: 60
+        warm: 5
+        database: vapor
+        cache: my-vapor-project-cache
+        storage: my-vapor-project-production
+        runtime: docker
+        domain:
+            - example.com
+            - '*.example.com'
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'npm ci && php artisan mix:compile --production --stop-on-error && rm -rf node_modules'
+            - '.winter-build.sh production'
+        deploy:
+            - 'php artisan cache:clear'
+            - 'php artisan winter:up'
+        ignore:
+            - '.docker'
+            - '.laravel-vapor'
+            - 'storage/debugbar/*'
+            - 'storage/framework/cache/*'
+            - 'storage/framework/sessions/*'
+            - 'storage/framework/views/*'
+            - 'storage/logs/*'
+            - 'storage/temp'
+    staging:
+        memory: 1024
+        cli-memory: 512
+        cli-tmp-storage: 512
+        timeout: 60
+        database: vapor-staging
+        cache: my-vapor-project-cache
+        storage: my-vapor-project-staging
+        runtime: docker
+        domain:
+            - staging.example.com
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'npm ci && php artisan mix:compile --production --stop-on-error && rm -rf node_modules'
+            - './winter-build.sh staging'
+        deploy:
+            - 'php artisan cache:clear'
+            - 'php artisan winter:up'
+        ignore:
+            - '.docker'
+            - '.laravel-vapor'
+            - 'storage/debugbar/*'
+            - 'storage/framework/cache/*'
+            - 'storage/framework/sessions/*'
+            - 'storage/framework/views/*'
+            - 'storage/logs/*'
+            - 'storage/temp'

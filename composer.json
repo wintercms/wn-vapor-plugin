@@ -1,0 +1,25 @@
+{
+    "name": "winter/wn-vapor-plugin",
+    "description": "Simple plugin to make it easier to run Winter CMS on Laravel Vapor",
+    "type": "winter-plugin",
+    "homepage": "https://github.com/wintercms/wn-vapor-plugin",
+    "support": {
+        "issues": "https://github.com/wintercms/wn-vapor-plugin/issues",
+        "discord": "https://discord.gg/D5MFSPH6Ux",
+        "source": "https://github.com/wintercms/wn-vapor-plugin"
+    },
+    "keywords": ["laravel", "vapor", "aws", "wintercms", "plugin"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Winter CMS Maintainers",
+            "homepage": "https://wintercms.com",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "laravel/vapor-core": "^2.21",
+        "predis/predis": "^1.1",
+        "winter/wn-driveraws-plugin": "dev-main"
+    }
+}
