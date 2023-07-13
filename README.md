@@ -10,6 +10,42 @@ This plugin is available for installation via [Composer](http://getcomposer.org/
 composer require winter/wn-vapor-plugin
 ```
 
+## Installation Notes (WIP)
+
+Next, you will need to install [Vapor CLI](https://github.com/laravel/vapor-cli) — this tool brings Vapor to your terminal and allows you to interact with your Vapor project to create databases, caches, or trigger new deployments:
+
+```bash
+composer global require laravel/vapor-cli
+```
+
+After you have installed the Vapor CLI, you should authenticate your Vapor account using the login command:
+
+```bash
+vapor login
+```
+
+- Create vapor.yml
+    - Either manually or through `vapor init`
+    - vapor init
+        - What is the name of this project?
+        - What region do you want it in?
+        - Would you like Vapor to assign vanity domains to each of your environments? (yes/no)
+        - Would you like to install the laravel/vapor-core package (yes/no) (SAY NO)
+- Edit vapor.yml
+    - TODO
+    - Replace `npm run build` with `php artisan mix:compile --production --stop-on-error`
+- run `vapor deploy $env`
+    "In PhpRedisConnector.php line 161: Connection refused" - your .env file uses redis but you don't have it running on the machine you're running the build from
+    "In PhpRedisConnector.php line 81: Class "Redis" not found" - your configuration references phpredis as the driver for redis but your build machine doesn't have the phpredis extension installed
+    "The command "npm ci && php artisan mix:compile --production --stop-on-error && rm -rf node_modules" failed. Exit Code: 127(Command not found)" - your build machine doesn't have node installed
+    - Your build machine will need node / npm installed
+        - `brew install node`
+    - Your build machine will need either the PHPRedis extension installed or predis installed via composer on the project
+       - `pecl install redis`
+       or
+       - `composer require predis/predis`
+
+
 ## Usage Notes:
 
 ### Configuration
