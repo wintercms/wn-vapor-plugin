@@ -4,6 +4,8 @@ namespace Winter\Vapor;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Laravel\Vapor\ConfiguresQueue;
+use Laravel\Vapor\Console\Commands\VaporHealthCheckCommand;
+use Laravel\Vapor\Console\Commands\VaporQueueListFailedCommand;
 use Laravel\Vapor\Console\Commands\VaporWorkCommand;
 use System\Classes\PluginBase;
 use Winter\Vapor\Console\VaporMirror;
@@ -65,5 +67,7 @@ class Plugin extends PluginBase
         $this->registerConsoleCommand('vapor.work', function ($app) {
             return new VaporWorkCommand($app['queue.vaporWorker']);
         });
+        $this->registerConsoleCommand('vapor.queue-failed', VaporQueueListFailedCommand::class);
+        $this->registerConsoleCommand('vapor.health-check', VaporHealthCheckCommand::class);
     }
 }
