@@ -21,6 +21,8 @@ class Plugin extends PluginBase
 {
     use ConfiguresQueue;
 
+    public $elevated = true;
+
     /**
      * Returns information about this plugin.
      */
