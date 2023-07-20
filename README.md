@@ -139,13 +139,16 @@ vapor login
 
 Winter CMS includes most required environment variables in the configuration files by default, but if you have customized them or are adding Vapor support to an existing project you will need to ensure the following configuration items are set to use environment variables:
 
+#### Automatically added by Winter.Vapor Plugin.php
 - `app.tempPath`: Should be set to `env('APP_TEMP_PATH', null)`, required for anything using temporary storage on the server (i.e. file uploads).
-- `app.asset_url`: Should be set to `env('ASSET_URL', null)`, required for loading assets from the CDN that Vapor configures for you as asset files are not made available on the Vapor servers directly.
-- `app.trustedHosts`: Recommended to add entries for every valid host to your application here.
 - `app.trustedProxies`: Recommended to set to `**` so that your application can correctly identify the real IP address of the client making the request despite the fact that it is behind multiple layers of proxies.
 - `cms.linkPolicy`: Should be set to `force` to ensure that the URL helper handles generating URLs.
 - `cms.databaseTemplates`: Should be set to `true` to ensure that the database is used for storing CMS templates since the filesystem is read-only on Vapor.
 - `filesystems.s3.stream_uploads`: Should be set to `true` or at least `env('AWS_S3_STREAM_UPLOADS', false)` to ensure that file uploads are streamed to S3 instead of attempting to upload them to the Vapor PHP server first, which has a low hard limit on request size which will perform worse and cause larger uploads to fail.
+
+#### Manual verification required:
+- `app.asset_url`: Should be set to `env('ASSET_URL', null)`, required for loading assets from the CDN that Vapor configures for you as asset files are not made available on the Vapor servers directly.
+- `app.trustedHosts`: Recommended to add entries for every valid host to your application here.
 - `filesystems.s3.url`: Should be set to `env('AWS_URL')` to ensure that the correct URL is used for accessing files on S3, especially if you are using a CloudFront CDN in front of S3.
 
 
