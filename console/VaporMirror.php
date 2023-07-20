@@ -5,7 +5,9 @@ namespace Winter\Vapor\Console;
 use Event;
 use File;
 use StdClass;
+use Symfony\Component\Console\Output\OutputInterface;
 use Winter\Storm\Console\Command;
+use Winter\Storm\Support\Str;
 
 /**
  * Console command to implement a "public" folder.
@@ -201,22 +203,19 @@ class VaporMirror extends Command
             }
         }
 
-        foreach ($this->option('ignore') as $ignore) {
-            if (preg_match($ignore, $src)) {
-                $this->warn('Ignoring: ' . $src);
-                return false;
+        // Check for ignored directories
+        if (File::isDirectory($src)) {
+            foreach ($this->option('ignore') as $ignore) {
+                if (preg_match($ignore, $src)) {
+                    $this->warn('Ignoring: ' . $src);
+                    return false;
+                }
             }
         }
-
+        // Check for paths to delete
         if ($this->option('delete')) {
             File::{'delete' . (File::isDirectory($src) ? 'Directory' : '')}($src);
             $this->info('Deleted: ' . $src);
-            return true;
-        }
-
-        if (!$this->option('copy')) {
-            File::link($src, $dest);
-            $this->info('Linked: ' . $dest);
             return true;
         }
 
@@ -225,13 +224,7 @@ class VaporMirror extends Command
         }
 
         if (File::isFile($src)) {
-            if (!File::isDirectory(dirname($dest))) {
-                File::makeDirectory(dirname($dest), 0755, true);
-            }
-
-            File::copy($src, $dest);
-            $this->info('Copied: ' . $dest);
-            return true;
+            return $this->mirrorPath($src, $dest);
         }
 
         foreach (
@@ -248,13 +241,41 @@ class VaporMirror extends Command
                     File::makeDirectory($dest . DIRECTORY_SEPARATOR . $iterator->getSubPathname());
                 }
                 continue;
+            } else {
+                $destPath = $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathname();
+                $srcPath = $item->getPathname();
+                $this->mirrorPath($srcPath, $destPath);
             }
-            File::copy($item, $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathname());
         }
 
-        $this->info('Copied: ' . $dest);
+        $this->info($this->option('copy') ? 'Copied: ' . $this->getPathInApp($src) : 'Linked: ' . $this->getPathInApp($src));
 
         return true;
+    }
+
+    protected function mirrorPath(string $src, string $destPath): bool
+    {
+        foreach ($this->option('ignore') as $ignore) {
+            if (preg_match($ignore, $src)) {
+                $this->warn('Ignoring: ' . $this->getPathInApp($src), OutputInterface::VERBOSITY_VERBOSE);
+                return false;
+            }
+        }
+
+        if ($this->option('copy')) {
+            File::copy($src, $destPath);
+            $this->info('Copied: ' . $this->getPathInApp($destPath), OutputInterface::VERBOSITY_VERBOSE);
+        } else {
+            File::link($src, $destPath);
+            $this->info('Linked: ' . $this->getPathInApp($destPath), OutputInterface::VERBOSITY_VERBOSE);
+        }
+
+        return true;
+    }
+
+    protected function getPathInApp(string $path): string
+    {
+        return Str::after($path, base_path());
     }
 
     protected function getDestinationPath(): ?string
