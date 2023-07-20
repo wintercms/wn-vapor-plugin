@@ -75,7 +75,7 @@ class Plugin extends PluginBase
                 $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
             });
 
-            Config::set('app.temp_path', '/tmp');
+            Config::set('app.tempPath', '/tmp');
             Config::set('app.trustedProxies', '**');
             Config::set('cms.databaseTemplates', true);
             Config::set('cms.linkPolicy', 'force');
