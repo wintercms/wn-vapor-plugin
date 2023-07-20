@@ -78,7 +78,6 @@ class Plugin extends PluginBase
             Config::set('app.tempPath', '/tmp');
             Config::set('app.trustedProxies', '**');
             Config::set('cms.databaseTemplates', true);
-            Config::set('cms.linkPolicy', 'force');
             Config::set('filesystems.s3.stream_uploads', true);
 
             // @TODO: Populate S3 .env config variables when we run create:bucket
