@@ -2,6 +2,7 @@
 
 namespace Winter\Vapor;
 
+use Config;
 use Event;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Illuminate\Foundation\Http\Events\RequestHandled;
@@ -25,6 +26,10 @@ class Plugin extends PluginBase
     use ConfiguresQueue;
 
     public $elevated = true;
+
+    public $require = [
+        'Winter.DriverAWS',
+    ];
 
     /**
      * Returns information about this plugin.
@@ -63,6 +68,21 @@ class Plugin extends PluginBase
         $this->app->macro('isRunningOnVapor', function() {
             return getenv('VAPOR_ARTIFACT_NAME') !== false;
         });
+
+        if ($this->app->isRunningOnVapor()) {
+            // Add required header to binary file responses
+            Event::listen(RequestHandled::class, function (RequestHandled $event) {
+                $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
+            });
+
+            Config::set('app.temp_path', '/tmp');
+            Config::set('app.trustedProxies', '**');
+            Config::set('cms.databaseTemplates', true);
+            Config::set('cms.linkPolicy', 'force');
+            Config::set('filesystems.s3.stream_uploads', true);
+
+            // @TODO: Populate S3 .env config variables when we run create:bucket
+        }
 
         // Add required header to binary file responses
         Event::listen(RequestHandled::class, function (RequestHandled $event) {
