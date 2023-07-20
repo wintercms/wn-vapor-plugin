@@ -156,12 +156,6 @@ Laravel Vapor by default loads its own bootstrapping files which then load Larav
 
 
 
-### Returning Binary Responses (File Downloads)
-
-See https://docs.vapor.build/1.0/projects/development.html#binary-responses. Basically `$response->headers->set('X-Vapor-Base64-Encode', 'True');` needs to be set on the response object for any binary responses (i.e. file downloads).
-
-
-
 ### Caching
 
 Use Redis, DynamoDB doesn't currently support being flushed in Laravel which is required for cache clearing through the Winter backend.

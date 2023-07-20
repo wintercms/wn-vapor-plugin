@@ -2,11 +2,14 @@
 
 namespace Winter\Vapor;
 
+use Event;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Laravel\Vapor\ConfiguresQueue;
 use Laravel\Vapor\Console\Commands\VaporHealthCheckCommand;
 use Laravel\Vapor\Console\Commands\VaporQueueListFailedCommand;
 use Laravel\Vapor\Console\Commands\VaporWorkCommand;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use System\Classes\PluginBase;
 use Winter\Vapor\Console\VaporMirror;
 
@@ -49,6 +52,24 @@ class Plugin extends PluginBase
 
         // Register our custom mirror
         $this->registerConsoleCommand('vapor.mirror', VaporMirror::class);
+    }
+
+    /**
+     * Boot the plugin
+     */
+    public function boot()
+    {
+        // Add App::isRunningOnVapor() macro
+        $this->app->macro('isRunningOnVapor', function() {
+            return getenv('VAPOR_ARTIFACT_NAME') !== false;
+        });
+
+        // Add required header to binary file responses
+        Event::listen(RequestHandled::class, function (RequestHandled $event) {
+            if (app()->isRunningOnVapor() && $event->response instanceof BinaryFileResponse) {
+                $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
+            }
+        });
     }
 
     /**
