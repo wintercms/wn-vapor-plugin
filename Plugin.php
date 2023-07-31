@@ -17,6 +17,7 @@ use Winter\Vapor\Console\VaporMirror;
 /**
  * Vapor Plugin Information File
  * @TODO:
+ *  - Add support to winter/wn-cms-module for creating database-only themes when databaseTemplates is enabled
  *  - Include httpHandler stub logic
  *  - Replace usage of vapor:mirror with winter:mirror when
  *    https://github.com/wintercms/winter/pull/559 is merged
