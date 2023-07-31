@@ -72,7 +72,10 @@ class Plugin extends PluginBase
         if ($this->app->isRunningOnVapor()) {
             // Add required header to binary file responses
             Event::listen(RequestHandled::class, function (RequestHandled $event) {
-                $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
+                // @TODO: Consider adding to Laravel\Vapor\Runtime\Http\Middleware\EnsureBinaryEncoding
+                if ($event->response instanceof BinaryFileResponse) {
+                    $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
+                }
             });
 
             Config::set('app.tempPath', '/tmp');
@@ -82,13 +85,6 @@ class Plugin extends PluginBase
 
             // @TODO: Populate S3 .env config variables when we run create:bucket
         }
-
-        // Add required header to binary file responses
-        Event::listen(RequestHandled::class, function (RequestHandled $event) {
-            if (app()->isRunningOnVapor() && $event->response instanceof BinaryFileResponse) {
-                $event->response->headers->set('X-Vapor-Base64-Encode', 'True');
-            }
-        });
     }
 
     /**
