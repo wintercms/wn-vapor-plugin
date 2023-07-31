@@ -83,6 +83,10 @@ class Plugin extends PluginBase
             Config::set('cms.databaseTemplates', true);
             Config::set('filesystems.s3.stream_uploads', true);
 
+            // Disable capturing AJAX requests via Winter.Debugbar when running on Laravel Vapor
+            // @see https://github.com/barryvdh/laravel-debugbar/issues/251
+            Config::set('debugbar.capture_ajax', false);
+
             // @TODO: Populate S3 .env config variables when we run create:bucket
         }
     }
