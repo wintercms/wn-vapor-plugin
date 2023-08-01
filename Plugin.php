@@ -79,16 +79,32 @@ class Plugin extends PluginBase
                 }
             });
 
+            // The only writable path on Vapor is /tmp, so we need to set the temp path to /tmp
+            // @see https://docs.vapor.build/1.0/resources/storage.html#temporary-storage
             Config::set('app.tempPath', '/tmp');
+
+            // Set the trusted proxies to ** to ensure that the correct IP address is used when
+            // using the Request::ip() method. This is required because Vapor uses a load balancer
+            // to route requests to the application.
             Config::set('app.trustedProxies', '**');
-            Config::set('cms.databaseTemplates', true);
+
+            // Enable S3 streamed uploads, Lamda has a ~4.5MB limit for uploading files directly through the
+            // application, streaming uploads allows us to upload files of any size and with less overhead.
+            // @see https://docs.vapor.build/1.0/resources/storage.html#file-uploads
             Config::set('filesystems.s3.stream_uploads', true);
+
+            // If the bucket is configured to be private ("Bucket and objects not public", the recommended setting,
+            // usually in concert with a CloudFront distribution), then we need to set the visibility to private
+            // in order to ensure that the S3 client doesn't attempt to set the ACL to public-read when uploading
+            // which will result in a 403 Forbidden error.
+            Config::set('filesystems.s3.visibility', 'private');
+
+            // Enable database templates for the CMS as the default filesystem is read-only on Vapor
+            Config::set('cms.databaseTemplates', true);
 
             // Disable capturing AJAX requests via Winter.Debugbar when running on Laravel Vapor
             // @see https://github.com/barryvdh/laravel-debugbar/issues/251
             Config::set('debugbar.capture_ajax', false);
-
-            // @TODO: Populate S3 .env config variables when we run create:bucket
         }
     }
 
