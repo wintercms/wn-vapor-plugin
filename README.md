@@ -168,6 +168,10 @@ For maximum security and reliability for using S3 with Winter CMS, buckets shoul
 
 ## Common Errors
 
+> Winter.Redirect rules don't work consistently
+
+Enable the "Caching of redirects (advanced)" setting to store redirects in Redis
+
 > ERROR: "In PhpRedisConnector.php line 161: Connection refused"
 
 You are currently trying to use Redis (for a database, cache, session, etc) but you don't have it running on the machine you're running the build from
